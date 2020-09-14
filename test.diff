@@ -1,0 +1,461 @@
+diff --git a/public/index.html b/public/index.html
+index aa069f2..b0564ce 100644
+--- a/public/index.html
++++ b/public/index.html
+@@ -15,6 +15,7 @@
+       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+     -->
+     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
++    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+     <!--
+       Notice the use of %PUBLIC_URL% in the tags above.
+       It will be replaced with the URL of the `public` folder during the build.
+@@ -24,7 +25,7 @@
+       work correctly both with client-side routing and a non-root public URL.
+       Learn how to configure a non-root public URL by running `npm run build`.
+     -->
+-    <title>React App</title>
++    <title>Quiz App</title>
+   </head>
+   <body>
+     <noscript>You need to enable JavaScript to run this app.</noscript>
+diff --git a/src/components/ActiveQuiz/ActiveQuiz.js b/src/components/ActiveQuiz/ActiveQuiz.js
+index e69de29..f7d63a2 100644
+--- a/src/components/ActiveQuiz/ActiveQuiz.js
++++ b/src/components/ActiveQuiz/ActiveQuiz.js
+@@ -0,0 +1,21 @@
++import React from "react";
++import classes from './ActiveQuiz.module.css'
++import AnswersList from "./AnswersList/AnswersList";
++
++const ActiveQuiz = (props) => {
++
++    return (
++        <div className={classes.ActiveQuiz}>
++            <p className={classes.Question}>
++                <span><strong>{props.answerNumber}.</strong>&nbsp;{props.question}</span>
++                <small>{props.answerNumber + ' from ' + props.quizLength}</small>
++            </p>
++            <AnswersList answers={props.answers}
++                         state={props.state}
++                         onAnswerClick={props.onAnswerClick}
++            />
++        </div>
++    )
++};
++
++export default ActiveQuiz;
+\ No newline at end of file
+diff --git a/src/components/ActiveQuiz/ActiveQuiz.module.css b/src/components/ActiveQuiz/ActiveQuiz.module.css
+index e69de29..3645e19 100644
+--- a/src/components/ActiveQuiz/ActiveQuiz.module.css
++++ b/src/components/ActiveQuiz/ActiveQuiz.module.css
+@@ -0,0 +1,14 @@
++
++.ActiveQuiz{
++    padding: 20px;
++    color: #ffffff;
++    border: 2px solid #ffffff;
++    border-radius: 5px;
++    margin: 0 10px;
++    box-sizing: border-box;
++}
++
++.Question {
++    display: flex;
++    justify-content: space-between;
++}
+\ No newline at end of file
+diff --git a/src/components/ActiveQuiz/AnswersList/AnswerItem/AnswerItem.js b/src/components/ActiveQuiz/AnswersList/AnswerItem/AnswerItem.js
+index e69de29..c62a8ef 100644
+--- a/src/components/ActiveQuiz/AnswersList/AnswerItem/AnswerItem.js
++++ b/src/components/ActiveQuiz/AnswersList/AnswerItem/AnswerItem.js
+@@ -0,0 +1,20 @@
++import React from "react";
++import classes from './AnswerItem.module.css'
++
++const AnswerItem = ({answer, onItemClick, state}) => {
++    const styleClasses = [classes.AnswerItem];
++
++
++    if (state) {
++        styleClasses.push(classes[state]);
++    }
++
++    return (
++        <li className={styleClasses.join(' ')} onClick={()=> onItemClick(answer.id)}>
++            {answer.text}
++        </li>
++    )
++};
++
++
++export default AnswerItem;
+\ No newline at end of file
+diff --git a/src/components/ActiveQuiz/AnswersList/AnswerItem/AnswerItem.module.css b/src/components/ActiveQuiz/AnswersList/AnswerItem/AnswerItem.module.css
+index e69de29..9447a78 100644
+--- a/src/components/ActiveQuiz/AnswersList/AnswerItem/AnswerItem.module.css
++++ b/src/components/ActiveQuiz/AnswersList/AnswerItem/AnswerItem.module.css
+@@ -0,0 +1,20 @@
++.AnswerItem {
++    border: 1px solid #ffffff;
++    border-radius: 5px;
++    padding: 5px 10px;
++    margin-bottom: 5px;
++    cursor: pointer;
++    transition: background .3s ease-in-out;
++}
++
++.AnswerItem:hover {
++    background: rgba(255,255,255, .2);
++}
++
++.AnswerItem.Success {
++    background: rgba(161,240,69,.7);
++}
++
++.AnswerItem.Error {
++    background: rgba(240,87,108, .7);
++}
+\ No newline at end of file
+diff --git a/src/components/ActiveQuiz/AnswersList/AnswersList.js b/src/components/ActiveQuiz/AnswersList/AnswersList.js
+index e69de29..def370a 100644
+--- a/src/components/ActiveQuiz/AnswersList/AnswersList.js
++++ b/src/components/ActiveQuiz/AnswersList/AnswersList.js
+@@ -0,0 +1,24 @@
++import React from "react";
++import classes from './AnswersList.module.css';
++import AnswerItem from "./AnswerItem/AnswerItem";
++
++const AnswersList = (props) => {
++    return (
++        <ul className={classes.AnswersList}>
++            {
++                props.answers.map((answer,idx) => {
++                    return (
++                        <AnswerItem key={idx}
++                                    answer={answer}
++                                    onItemClick={props.onAnswerClick}
++                                    state={props.state ? props.state[answer.id] : null}
++                        />
++                    )
++                })
++            }
++        </ul>
++    )
++};
++
++
++export default AnswersList;
+\ No newline at end of file
+diff --git a/src/components/ActiveQuiz/AnswersList/AnswersList.module.css b/src/components/ActiveQuiz/AnswersList/AnswersList.module.css
+index e69de29..fa42ebd 100644
+--- a/src/components/ActiveQuiz/AnswersList/AnswersList.module.css
++++ b/src/components/ActiveQuiz/AnswersList/AnswersList.module.css
+@@ -0,0 +1,8 @@
++li {
++    list-style-type: none;
++}
++
++.AnswersList {
++    margin: 0;
++    padding: 0;
++}
+\ No newline at end of file
+diff --git a/src/components/FinishedQuiz/FinishedQuiz.js b/src/components/FinishedQuiz/FinishedQuiz.js
+index e69de29..374acf4 100644
+--- a/src/components/FinishedQuiz/FinishedQuiz.js
++++ b/src/components/FinishedQuiz/FinishedQuiz.js
+@@ -0,0 +1,44 @@
++import React from "react";
++import classes from './FinishedQuiz.module.css'
++
++const FinishedQuis = (props) => {
++    console.log(props)
++  const succesCount = Object.keys(props.results).filter(item => props.results[item] === 'Success').length;
++
++  return (
++      <div className={classes.FinishedQuiz}>
++          <ul>
++              {
++                  props.quiz.map((quizItem,index) => {
++                      const cls = [
++                          'fa',
++                          props.results[quizItem.id] === 'Error' ? 'fa-times' : 'fa-check',
++                          classes[props.results[quizItem.id]]
++                      ];
++                      return (
++                          <li key={index}>
++                              <strong>{index + 1}</strong>. &nbsp;
++                              {quizItem.question}
++                              <i className={cls.join(' ')}/>
++                          </li>
++                      )
++                  })
++              }
++              {/*<li>*/}
++              {/*    <strong>1.</strong>*/}
++              {/*    <i className={'fa fa-times'}/>*/}
++              {/*</li>*/}
++              {/*<li>*/}
++              {/*    <strong>2.</strong>*/}
++              {/*    <i className={'fa fa-check'}/>*/}
++              {/*</li>*/}
++          </ul>
++          <p>Correct answers {succesCount} from {props.quiz.length}</p>
++          <div>
++              <button onClick={props.onRestart}>Restart</button>
++          </div>
++      </div>
++  )
++};
++
++export default FinishedQuis;
+\ No newline at end of file
+diff --git a/src/components/FinishedQuiz/FinishedQuiz.module.css b/src/components/FinishedQuiz/FinishedQuiz.module.css
+index e69de29..6865694 100644
+--- a/src/components/FinishedQuiz/FinishedQuiz.module.css
++++ b/src/components/FinishedQuiz/FinishedQuiz.module.css
+@@ -0,0 +1,26 @@
++.FinishedQuiz {
++    padding: 20px;
++    color: #ffffff;
++    border: 2px solid #ffffff;
++    border-radius: 5px;
++    box-sizing: border-box;
++    margin: 0 10px;
++}
++
++.FinishedQuiz ul {
++    list-style: none;
++    padding: 0;
++    margin: 0;
++}
++
++.FinishedQuiz ul li i {
++    margin-left: 10px;
++}
++
++.Success {
++    color: rgba(161,240,69,.7);
++}
++
++.Error {
++    color: rgba(240,87,108, .7);
++}
+\ No newline at end of file
+diff --git a/src/components/UI/Button/Button.js b/src/components/UI/Button/Button.js
+index e69de29..fd90b6a 100644
+--- a/src/components/UI/Button/Button.js
++++ b/src/components/UI/Button/Button.js
+@@ -0,0 +1,20 @@
++import React from "react";
++import classes from './Button.module.css'
++
++const Button = (props) => {
++    const cls = [
++      classes.Button,
++      classes[props.type]
++    ];
++
++    return (
++        <button disabled={props.disabled}
++                onClick={props.onClick}
++                className={cls.join(' ')}
++        >
++            {props.children}
++        </button>
++    )
++};
++
++export default Button;
+\ No newline at end of file
+diff --git a/src/components/UI/Button/Button.module.css b/src/components/UI/Button/Button.module.css
+index e69de29..61a8dc9 100644
+--- a/src/components/UI/Button/Button.module.css
++++ b/src/components/UI/Button/Button.module.css
+@@ -0,0 +1,37 @@
++.Button {
++    display: inline-block;
++    padding: 10px;
++    border-radius: 4px;
++    border: 1px solid #ccc;
++    color: black;
++    margin-right: 15px;
++    text-transform: uppercase;
++    font-weight: bold;
++    font-size: 12px;
++}
++
++.Button:focus {
++    outline: none;
++}
++
++.Button:active {
++    box-shadow: inset 2px 2px 1px rgba(0,0,0, .3);
++}
++
++.Button.disabled {
++    background: #ccc;
++    color: black;
++    cursor: not-allowed;
++}
++
++.error {
++
++}
++
++.success {
++
++}
++
++.primary {
++
++}
+\ No newline at end of file
+diff --git a/src/containers/Quiz/Quiz.js b/src/containers/Quiz/Quiz.js
+index f86c70d..a005428 100644
+--- a/src/containers/Quiz/Quiz.js
++++ b/src/containers/Quiz/Quiz.js
+@@ -1,15 +1,125 @@
+ import React, {Component} from "react";
+ import classes from './Quiz.module.css'
++import ActiveQuiz from "../../components/ActiveQuiz/ActiveQuiz";
++import FinishedQuiz from "../../components/FinishedQuiz/FinishedQuiz";
+ 
+-class Quiz extends Component{
++class Quiz extends Component {
+     state = {
+-      quiz: []
++        activeQuestion: 0,
++        answerState: null,
++        isFinished: false,
++        results: {},
++        quiz: [
++            {
++                id: 1,
++                question: 'What is React?',
++                rightAnswerId: 1,
++                answers: [
++                    {text: 'Library', id: 1},
++                    {text: 'Framework', id: 2},
++                    {text: 'Nothing', id: 3},
++                    {text: 'Question 1', id: 4},
++                ]
++            },
++            {
++                id: 2,
++                question: 'What is Angular?',
++                rightAnswerId: 2,
++                answers: [
++                    {text: 'Library', id: 1},
++                    {text: 'Framework', id: 2},
++                    {text: 'Nothing', id: 3},
++                    {text: 'Question 1', id: 4},
++                ]
++            }
++        ]
+     };
+ 
++    onAnswerClickHandler = (answerId) => {
++        if (this.state.answerState) {
++            const key = Object.keys(this.state.answerState)[0];
++            if (this.state.answerState[key] === 'Success') {
++                return null
++            }
++        }
++
++        const results = this.state.results;
++
++
++        const question = this.state.quiz[this.state.activeQuestion];
++        if (question.rightAnswerId === answerId) {
++
++            if (!results[question.id]) {
++                results[question.id] = 'Success'
++            }
++
++            this.setState({
++                answerState: {
++                    [answerId]: 'Success'
++                },
++                results
++            });
++
++            const timeout = setTimeout(() => {
++                if (this.isQuistionFinished()) {
++                    this.setState({isFinished: true})
++                } else {
++                    this.setState(({activeQuestion}) => ({
++                        activeQuestion: ++activeQuestion,
++                        answerState: null,
++                    }))
++                }
++                clearTimeout(timeout)
++            }, 1000);
++
++        } else {
++            results[question.id] = 'Error';
++            this.setState({
++                answerState: {
++                    [answerId]: 'Error'
++                },
++                results
++            });
++        }
++
++
++    };
++
++    handleRestart = () => {
++        this.setState({
++            activeQuestion: 0,
++            answerState: null,
++            isFinished: false,
++            results: {}
++        })
++    };
++
++    isQuistionFinished() {
++        return this.state.activeQuestion + 1 === this.state.quiz.length
++    }
++
+     render() {
+         return (
+             <div className={classes.Quiz}>
+-                <h1>Quiz</h1>
++                <div className={classes.QuizWrapper}>
++                    <h1>Choose answers for this quiz!</h1>
++                    {
++                        this.state.isFinished
++                            ? <FinishedQuiz
++                                    results={this.state.results}
++                                    quiz={this.state.quiz}
++                                    onRestart={this.handleRestart}
++                                />
++                            : <ActiveQuiz answers={this.state.quiz[this.state.activeQuestion].answers}
++                                          question={this.state.quiz[this.state.activeQuestion].question}
++                                          onAnswerClick={this.onAnswerClickHandler}
++                                          quizLength={this.state.quiz.length}
++                                          answerNumber={this.state.activeQuestion + 1}
++                                          state={this.state.answerState}
++                            />
++                    }
++
++                </div>
+             </div>
+         )
+     }
+diff --git a/src/containers/Quiz/Quiz.module.css b/src/containers/Quiz/Quiz.module.css
+index 56d5b1e..c1a530d 100644
+--- a/src/containers/Quiz/Quiz.module.css
++++ b/src/containers/Quiz/Quiz.module.css
+@@ -11,3 +11,7 @@
+     color: #fff;
+     margin-left: 10px;
+ }
++
++.QuizWrapper {
++    width: 600px;
++}
+\ No newline at end of file
