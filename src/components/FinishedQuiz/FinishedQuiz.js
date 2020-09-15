@@ -1,5 +1,6 @@
 import React from "react";
 import classes from './FinishedQuiz.module.css'
+import Button from "../UI/Button/Button";
 
 const FinishedQuis = (props) => {
     console.log(props)
@@ -24,18 +25,19 @@ const FinishedQuis = (props) => {
                       )
                   })
               }
-              {/*<li>*/}
-              {/*    <strong>1.</strong>*/}
-              {/*    <i className={'fa fa-times'}/>*/}
-              {/*</li>*/}
-              {/*<li>*/}
-              {/*    <strong>2.</strong>*/}
-              {/*    <i className={'fa fa-check'}/>*/}
-              {/*</li>*/}
           </ul>
           <p>Correct answers {succesCount} from {props.quiz.length}</p>
           <div>
-              <button onClick={props.onRestart}>Restart</button>
+              <Button onClick={props.onRestart}
+                      type={'primary'}
+              >
+                  RESTART
+              </Button>
+              <Button
+                      type={'succes'}
+              >
+                  GO TO TESTS
+              </Button>
           </div>
       </div>
   )
