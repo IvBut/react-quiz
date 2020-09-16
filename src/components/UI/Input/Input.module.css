@@ -1,0 +1,41 @@
+.Input {
+    font-size: 16px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.Input label {
+    margin-bottom: 3px;
+    padding: 0;
+    display: block;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.Input input {
+    display: block;
+    width: 100%;
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+    border: none;
+    outline: none;
+    border-bottom: 2px solid white;
+    background: none;
+}
+
+.Input span {
+    display: block;
+    width: 100%;
+    text-align: center;
+    color: red;
+    font-size: 12px;
+    font-weight: bold;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translateY(100%);
+}
+
+.Input.invalid label{
+    color: red;
+}
