@@ -36,6 +36,6 @@
     transform: translateY(100%);
 }
 
-.Input.invalid label{
+.Input.invalid {
     color: red;
 }

@@ -6,6 +6,10 @@ const Input = (props) => {
         classes.Input
     ];
 
+    if (isInvalid(props)) {
+        cls.push(classes.invalid)
+    }
+
     let inputType = props.type || 'text';
     let htmlFor = inputType + ' - ' + Math.random();
     let value = props.value;
@@ -15,9 +19,21 @@ const Input = (props) => {
         <div className={cls.join(' ')} >
             <label htmlFor={htmlFor}>{props.label || 'Label'}</label>
             <input  id={htmlFor} type={inputType} value={value} onChange={props.onChange}/>
-            <span className="errorMessage">{props.errorMessage}</span>
+            {
+                isInvalid(props) && <span>{props.errorMessage || 'Enter correct value'}</span>
+            }
+
         </div>
     );
 };
+
+
+
+function isInvalid({valid , touched, shouldValidate}) {
+    return !valid && shouldValidate && touched;
+}
+
+
+
 
 export default Input;
