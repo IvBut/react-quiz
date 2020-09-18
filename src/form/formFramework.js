@@ -21,3 +21,10 @@ export function validate(value, validation = null) {
 
     return isValid;
 }
+
+export function validateForm(formControls) {
+
+    return Object.keys(formControls).reduce((acc,control) => {
+        return formControls[control].valid && acc
+    },true)
+}

@@ -23,6 +23,12 @@
     background: none;
 }
 
+.Input input.fill {
+    border: 2px solid black;
+    font-weight: bold;
+    font-size: 14px;
+}
+
 .Input span {
     display: block;
     width: 100%;

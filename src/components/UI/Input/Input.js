@@ -10,6 +10,8 @@ const Input = (props) => {
         cls.push(classes.invalid)
     }
 
+
+
     let inputType = props.type || 'text';
     let htmlFor = inputType + ' - ' + Math.random();
     let value = props.value;
@@ -18,7 +20,7 @@ const Input = (props) => {
     return (
         <div className={cls.join(' ')} >
             <label htmlFor={htmlFor}>{props.label || 'Label'}</label>
-            <input  id={htmlFor} type={inputType} value={value} onChange={props.onChange}/>
+            <input  id={htmlFor} type={inputType} value={value} onChange={props.onChange} className={props.fillStyle ? classes.fill : null}/>
             {
                 isInvalid(props) && <span>{props.errorMessage || 'Enter correct value'}</span>
             }

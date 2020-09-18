@@ -1,13 +1,17 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Layout from "./HOC/Layout/Layout";
 import Quiz from "./containers/Quiz/Quiz";
 import { Route, Switch } from "react-router";
 import QuizCreator from "./containers/QuizCreator/QuizCreator";
 import Auth from "./containers/Auth/Auth";
 import QuizList from "./containers/QuizList/QuizList";
+import axios from "axios";
+import {APP_CONFIG} from "./appConfig/appConfig";
 
 
 function App() {
+
+
   return (
       <Layout>
             <Switch>
