@@ -1,14 +1,28 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import classes from './QuizList.module.css';
-import {NavLink} from "react-router-dom";
+import {NavLink, useHistory} from "react-router-dom";
+import FirebaseService from "../../services/firebaseService";
+import Spinner from "../../components/UI/Spinner/Spinner";
 
-const QuizList = () => {
+const QuizList = (props) => {
+
+    const [allQuizList, setAllQuizList] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchData = async () => {
+          const result = await FirebaseService.getAllQuiz();
+          setAllQuizList(result);
+          setIsLoading(false);
+      };
+      fetchData();
+    },[]);
 
     const renderQuizes = () => {
-        return [1,2,3].map((quiz, index) => {
+        return allQuizList.map((quiz, index) => {
             return (
-                 <li key={index}>
-                     <NavLink to={`/quiz/${quiz}`}>Test {quiz}</NavLink>
+                <li key={index}>
+                     <NavLink to={{pathname: `/quiz/${quiz.id}`, state: {...allQuizList[index]}}}  >{quiz.quizName}</NavLink>
                  </li>
             )
         })
@@ -16,12 +30,19 @@ const QuizList = () => {
 
 
     return (
-        <div className={classes.QuizList}>
-            <h1>All available tests</h1>
-           <ul>
-               {renderQuizes()}
-           </ul>
-        </div>
+        <>
+            {
+                !isLoading ?
+                    <div className={classes.QuizList}>
+                        <h1>All available tests</h1>
+                        <ul>
+                            {renderQuizes()}
+                        </ul>
+                    </div>
+                    : <Spinner/>
+            }
+        </>
+
     );
 };
 

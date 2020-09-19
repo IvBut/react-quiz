@@ -2,6 +2,8 @@ import React, {Component} from "react";
 import classes from './Quiz.module.css'
 import ActiveQuiz from "../../components/ActiveQuiz/ActiveQuiz";
 import FinishedQuiz from "../../components/FinishedQuiz/FinishedQuiz";
+import Spinner from "../../components/UI/Spinner/Spinner";
+import FirebaseService from "../../services/firebaseService";
 
 class Quiz extends Component {
     state = {
@@ -9,31 +11,34 @@ class Quiz extends Component {
         answerState: null,
         isFinished: false,
         results: {},
-        quiz: [
-            {
-                id: 1,
-                question: 'What is React?',
-                rightAnswerId: 1,
-                answers: [
-                    {text: 'Library', id: 1},
-                    {text: 'Framework', id: 2},
-                    {text: 'Nothing', id: 3},
-                    {text: 'Question 1', id: 4},
-                ]
-            },
-            {
-                id: 2,
-                question: 'What is Angular?',
-                rightAnswerId: 2,
-                answers: [
-                    {text: 'Library', id: 1},
-                    {text: 'Framework', id: 2},
-                    {text: 'Nothing', id: 3},
-                    {text: 'Question 1', id: 4},
-                ]
-            }
-        ]
+        quiz: [],
+        quizName: '',
+        isLoading: true,
+        error: false
     };
+
+    constructor(props) {
+        super(props);
+    }
+
+    componentDidMount() {
+        if (!this.props.location.state) {
+            FirebaseService.getQuizById(this.props.match.params.id)
+                .then(data => {
+                this.setState({
+                    ...data,
+                    isLoading: false
+                })
+            })
+        } else {
+            this.setState(() => {
+                return {
+                    ...this.props.location.state,
+                    isLoading: false
+                }
+            })
+        }
+    }
 
     onAnswerClickHandler = (answerId) => {
         if (this.state.answerState) {
@@ -47,7 +52,7 @@ class Quiz extends Component {
 
 
         const question = this.state.quiz[this.state.activeQuestion];
-        if (question.rightAnswerId === answerId) {
+        if (question.rightAnswerId  === answerId) {
 
             if (!results[question.id]) {
                 results[question.id] = 'Success'
@@ -100,27 +105,41 @@ class Quiz extends Component {
 
     render() {
         return (
-            <div className={classes.Quiz}>
-                <div className={classes.QuizWrapper}>
-                    <h1>Choose answers for this quiz!</h1>
-                    {
-                        this.state.isFinished
-                            ? <FinishedQuiz
-                                    results={this.state.results}
-                                    quiz={this.state.quiz}
-                                    onRestart={this.handleRestart}
-                                />
-                            : <ActiveQuiz answers={this.state.quiz[this.state.activeQuestion].answers}
-                                          question={this.state.quiz[this.state.activeQuestion].question}
-                                          onAnswerClick={this.onAnswerClickHandler}
-                                          quizLength={this.state.quiz.length}
-                                          answerNumber={this.state.activeQuestion + 1}
-                                          state={this.state.answerState}
-                            />
-                    }
-
-                </div>
-            </div>
+            <>
+                {
+                    !this.state.isLoading
+                        ? <div className={classes.Quiz}>
+                            <div className={classes.QuizWrapper}>
+                                {
+                                    this.state.error || this.state.quiz.length === 0
+                                        ? <h1>{this.state.error || 'Something goes wrong('}</h1>
+                                        : [
+                                            <h1 key={'name-0'}>{this.state.quizName}</h1>,
+                                            (
+                                                this.state.isFinished
+                                                    ? <FinishedQuiz
+                                                        key={'finish-1'}
+                                                        results={this.state.results}
+                                                        quiz={this.state.quiz}
+                                                        onRestart={this.handleRestart}
+                                                    />
+                                                    : <ActiveQuiz
+                                                        key={'active-1'}
+                                                        answers={this.state.quiz[this.state.activeQuestion].answers}
+                                                        question={this.state.quiz[this.state.activeQuestion].question}
+                                                        onAnswerClick={this.onAnswerClickHandler}
+                                                        quizLength={this.state.quiz.length}
+                                                        answerNumber={this.state.activeQuestion + 1}
+                                                        state={this.state.answerState}
+                                                    />
+                                            )
+                                        ]
+                                    }
+                                </div>
+                            </div>
+                        : <Spinner/>
+                }
+            </>
         )
     }
 }

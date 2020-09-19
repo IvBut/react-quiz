@@ -35,7 +35,7 @@ const QuizCreator = () => {
 
     const [quiz, setQuiz] = useState([]);
     const [formControls, setFormControls] = useState(createFormControls());
-    const [rightAnswerId, setRightAnswerId] = useState(0);
+    const [rightAnswerId, setRightAnswerId] = useState(1);
     const [isFormValid, setIsFormValid] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
 
@@ -66,25 +66,24 @@ const QuizCreator = () => {
         quizListToAdd.push(questionItem);
         setQuiz(quizListToAdd);
         setFormControls(createFormControls());
-        setRightAnswerId(0);
-    };
-
-    const addQuizHandler = () => {
-        setShowConfirm(true);
-        // FirebaseService.createQuiz(quiz)
-        //     .then(resp => {
-        //         setQuiz([]);
-        //         setRightAnswerId(0);
-        //         console.log(resp);
-        //     })
-        //     .catch(err => {
-        //         console.log(err);
-        //     })
+        setRightAnswerId(1);
     };
 
     const handleAddQuizToFirebase = (quizName) => {
-        console.log(quizName)
-        setShowConfirm(false)
+        let body = {
+            quizName,
+            quiz
+        };
+        setShowConfirm(false);
+        FirebaseService.createQuiz(body)
+            .then(resp => {
+                setQuiz([]);
+                setRightAnswerId(1);
+                console.log(resp);
+            })
+            .catch(err => {
+                console.log(err);
+            });
     };
 
     const renderControls = useMemo(() => {
@@ -153,7 +152,7 @@ const QuizCreator = () => {
                             Add question
                         </Button>
                         <Button type="success"
-                                onClick={addQuizHandler}
+                                onClick={() => setShowConfirm(true)}
                                 disabled={quiz.length === 0}
                         >
                             Create Test
