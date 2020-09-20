@@ -3,19 +3,29 @@ import classes from './QuizList.module.css';
 import {NavLink, useHistory} from "react-router-dom";
 import FirebaseService from "../../services/firebaseService";
 import Spinner from "../../components/UI/Spinner/Spinner";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchAllQuizes} from "../../store/actions/actionCreators";
 
 const QuizList = (props) => {
 
-    const [allQuizList, setAllQuizList] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const allQuizList = useSelector(state => state.quizListReducer.allQuizList);
+    const isLoading = useSelector(state => state.quizListReducer.loading);
+    const dispatch = useDispatch();
 
-    useEffect(() => {
-      const fetchData = async () => {
-          const result = await FirebaseService.getAllQuiz();
-          setAllQuizList(result);
-          setIsLoading(false);
-      };
-      fetchData();
+    // const [allQuizList, setAllQuizList] = useState([]);
+    // const [isLoading, setIsLoading] = useState(true);
+
+    // useEffect(() => {
+    //   const fetchData = async () => {
+    //       const result = await FirebaseService.getAllQuiz();
+    //       setAllQuizList(result);
+    //       setIsLoading(false);
+    //   };
+    //   fetchData();
+    // },[]);
+
+    useEffect(()=> {
+        dispatch(fetchAllQuizes())
     },[]);
 
     const renderQuizes = () => {
@@ -27,7 +37,6 @@ const QuizList = (props) => {
             )
         })
     };
-
 
     return (
         <>
