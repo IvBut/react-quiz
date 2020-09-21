@@ -3,9 +3,32 @@ import classes from './Auth.module.css'
 import Button from "../../components/UI/Button/Button";
 import Input from "../../components/UI/Input/Input";
 import {useState} from "react";
+import AuthService, {AUTH_TYPE_SIGN_IN, AUTH_TYPE_SIGN_UP} from "../../services/AuthService";
+import {useDispatch, useSelector} from "react-redux";
+import {checkForAuth, makeAuth} from "../../store/actions/actionCreators";
+import {useEffect} from "react";
+import Spinner from "../../components/UI/Spinner/Spinner";
+import {AlertContext} from "../../components/UI/Alert/Alert";
+import {useContext} from "react";
 
 
 const Auth = (props) => {
+
+    const isLoading = useSelector(state => state.authReducer.isLoading);
+    const credentials = useSelector(state => state.authReducer.credentials);
+    const userMessage = useSelector(state => state.authReducer.userMessage);
+    const isAuthenticated = useSelector(state => state.authReducer.isAuthenticated);
+    const dispatch = useDispatch();
+
+    const {onShowAlert} = useContext(AlertContext);
+
+    useEffect(() => {
+        dispatch(checkForAuth());
+    },[]);
+
+    useEffect((prevState) => {
+        onShowAlert({type:'success', text: userMessage}, 5000);
+    },[userMessage]);
 
     const [formControls, setFormControls] = useState({
         email: {
@@ -94,11 +117,19 @@ const Auth = (props) => {
     };
 
     const handleSignIn = () => {
-
+        dispatch(makeAuth({
+            email: formControls.email.value,
+            password: formControls.password.value,
+            authType: AUTH_TYPE_SIGN_IN
+        }));
     };
 
     const handleSignUp = () => {
-
+        dispatch(makeAuth({
+            email: formControls.email.value,
+            password: formControls.password.value,
+            authType: AUTH_TYPE_SIGN_UP
+        }));
     };
 
     const submitHandler = (e) => {
@@ -106,31 +137,53 @@ const Auth = (props) => {
     };
 
     return (
-        <div className={classes.Auth}>
-            <form  className={classes.Form} onSubmit={submitHandler}>
-                <h1>Authorization</h1>
-                <div className={classes.inputControlsWrapper}>
-                    {renderInputs()}
-                    <div className={classes.btnControlsWrapper}>
-                        <Button type={'success'}
-                                onClick={handleSignIn}
-                                disabled={!readyToSubmit}
-                        >
-                            SIGN IN
-                        </Button>
-                        <Button type={'primary'}
-                                onClick={handleSignUp}
-                                disabled={!readyToSubmit}
-                        >
-                            SIGN UP
-                        </Button>
-                    </div>
+        <>
+            {
+                !isAuthenticated?
+                        <>
+                            <div className={classes.Auth}>
+                                <form  className={classes.Form} onSubmit={submitHandler}>
+                                    <h1>Authorization {userMessage}</h1>
+                                    <div className={classes.inputControlsWrapper}>
+                                        {renderInputs()}
+                                        <div className={classes.btnControlsWrapper}>
+                                            <Button type={'success'}
+                                                    onClick={handleSignIn}
+                                                    disabled={!readyToSubmit}
+                                            >
+                                                SIGN IN
+                                            </Button>
+                                            <Button type={'primary'}
+                                                    onClick={handleSignUp}
+                                                    disabled={!readyToSubmit}
+                                            >
+                                                SIGN UP
+                                            </Button>
+                                        </div>
 
-                </div>
-            </form>
-        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            {isLoading && <Spinner />}
+                        </>
+                    :   <div className={classes.Auth}>
+                            <h1>{userMessage}</h1>
+                            <h1>{`Session expire in ${transformDate(new Date(credentials.expiresIn).getTime())}`}</h1>
+                        </div>
+            }
+
+        </>
+
     );
 };
+
+function transformDate(date) {
+
+    let h = new Date(date).getHours();
+    let m =  new Date(date).getMinutes();
+    let s =  new Date(date).getSeconds();
+    return `${h}:${m}:${s}`
+}
 
 function validateEmail(email) {
     const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;

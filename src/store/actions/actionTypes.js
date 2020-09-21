@@ -1,3 +1,10 @@
 export  const FETCH_QUIZES_STARTED = 'FETCH_QUIZES_STARTED';
 export  const FETCH_QUIZES_SUCCESS = 'FETCH_QUIZES_SUCCESS';
 export  const FETCH_QUIZES_FAIL = 'FETCH_QUIZES_FAIL';
+
+
+
+export const AUTH_STARTED = 'AUTH_STARTED';
+export const AUTH_SUCCESS = 'AUTH_SUCCESS';
+export const AUTH_FAIL = 'AUTH_FAIL';
+export const AUTH_LOGOUT = 'AUTH_LOGOUT';
