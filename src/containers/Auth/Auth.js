@@ -3,9 +3,9 @@ import classes from './Auth.module.css'
 import Button from "../../components/UI/Button/Button";
 import Input from "../../components/UI/Input/Input";
 import {useState} from "react";
-import AuthService, {AUTH_TYPE_SIGN_IN, AUTH_TYPE_SIGN_UP} from "../../services/AuthService";
+import {AUTH_TYPE_SIGN_IN, AUTH_TYPE_SIGN_UP} from "../../services/AuthService";
 import {useDispatch, useSelector} from "react-redux";
-import {checkForAuth, makeAuth} from "../../store/actions/actionCreators";
+import {authLogout, checkForAuth, makeAuth} from "../../store/actions/actionCreators";
 import {useEffect} from "react";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import {AlertContext} from "../../components/UI/Alert/Alert";
@@ -23,12 +23,18 @@ const Auth = (props) => {
     const {onShowAlert} = useContext(AlertContext);
 
     useEffect(() => {
-        dispatch(checkForAuth());
-    },[]);
+        dispatch(checkForAuth())
+            .then(res => {
+                if (res){
+                    onShowAlert({type: res}, 5000);
+                }
+            })
+    },[dispatch]);
 
-    useEffect((prevState) => {
-        onShowAlert({type:'success', text: userMessage}, 5000);
-    },[userMessage]);
+    // useEffect((prevState) => {
+    //     console.log('prev',prevState)
+    //     onShowAlert({type:'success', text: userMessage}, 5000);
+    // },[userMessage]);
 
     const [formControls, setFormControls] = useState({
         email: {
@@ -121,7 +127,9 @@ const Auth = (props) => {
             email: formControls.email.value,
             password: formControls.password.value,
             authType: AUTH_TYPE_SIGN_IN
-        }));
+        })).then((type) => {
+            onShowAlert({type}, 5000);
+        });
     };
 
     const handleSignUp = () => {
@@ -129,7 +137,9 @@ const Auth = (props) => {
             email: formControls.email.value,
             password: formControls.password.value,
             authType: AUTH_TYPE_SIGN_UP
-        }));
+        })).then((type) => {
+            onShowAlert({type}, 5000);
+        });
     };
 
     const submitHandler = (e) => {
@@ -167,8 +177,13 @@ const Auth = (props) => {
                             {isLoading && <Spinner />}
                         </>
                     :   <div className={classes.Auth}>
-                            <h1>{userMessage}</h1>
-                            <h1>{`Session expire in ${transformDate(new Date(credentials.expiresIn).getTime())}`}</h1>
+                            <div>
+                                <h1>{userMessage}</h1>
+                                <h1>{`Session expire in ${transformDate(credentials.expiresIn)}`}</h1>
+                                <div style={{textAlign: 'center'}}>
+                                    <Button type="error" onClick={() => dispatch(authLogout())}>Log Out</Button>
+                                </div>
+                            </div>
                         </div>
             }
 
@@ -178,10 +193,11 @@ const Auth = (props) => {
 };
 
 function transformDate(date) {
+    let expDate = new Date(date);
 
-    let h = new Date(date).getHours();
-    let m =  new Date(date).getMinutes();
-    let s =  new Date(date).getSeconds();
+    let h = expDate.getHours();
+    let m =  expDate.getMinutes();
+    let s =  expDate.getSeconds();
     return `${h}:${m}:${s}`
 }
 

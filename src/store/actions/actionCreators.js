@@ -57,14 +57,16 @@ export const fetchAllQuizesFail = (error) => {
 
                 /*Auth page*/
 
-export const makeAuth = (userCreds) => {
+export const makeAuth =  (userCreds) => {
     return async dispatch => {
         try {
             dispatch(authStarted());
             const result = await AuthService.authenticateWithEmailPassword(userCreds);
             dispatch(authSuccess(result));
+            return 'success';
         }catch (e) {
             dispatch(authFailed(e.message));
+            return 'error';
         }
 
     }
@@ -103,14 +105,14 @@ export function authLogout() {
 }
 
 export function checkForAuth(){
-    return dispatch => {
+    return async dispatch => {
         let res = AuthService.isAuthenticated();
-        console.log('check ',res)
         if (!res) {
-            console.log('aa')
             dispatch(authLogout());
+            return Promise.resolve(null);
         } else {
-            dispatch(authSuccess(AuthService.credentials))
+            dispatch(authSuccess(AuthService.credentials));
+            return Promise.resolve('success')
         }
     };
 

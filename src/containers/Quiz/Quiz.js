@@ -17,10 +17,6 @@ class Quiz extends Component {
         error: false
     };
 
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         if (!this.props.location.state) {
             FirebaseService.getQuizById(this.props.match.params.id)

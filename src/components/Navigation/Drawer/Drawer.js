@@ -2,14 +2,12 @@ import React from "react";
 import classes from './Drawer.module.css';
 import Backdrop from "../../UI/Backdrop/Backdrop";
 import {NavLink} from "react-router-dom";
+import {useSelector} from "react-redux";
 
-const links = [
-    {to: '/', label: 'Home', exact: true},
-    {to: '/auth', label: 'Sing in', exact: false},
-    {to: '/quiz-creator', label: 'Create quiz', exact: false},
-];
+
 
 const Drawer = ({isOpen, onClose}) => {
+    const isAuthenticated = useSelector(state => state.authReducer.isAuthenticated);
 
     const cls = [
         classes.Drawer
@@ -18,6 +16,20 @@ const Drawer = ({isOpen, onClose}) => {
     if (!isOpen) {
         cls.push(classes.closed)
     }
+
+    let links = [
+        {to: '/', label: 'Home', exact: true},
+    ];
+
+    if (isAuthenticated) {
+        links = [...links,
+            {to: '/auth', label: 'Logout', exact: false},
+            {to: '/quiz-creator', label: 'Create quiz', exact: false}
+        ]
+    } else {
+        links = [...links, {to: '/auth', label: 'Sign In', exact: false}]
+    }
+
 
     const renderLinks = () => {
         return links.map((link, index) => (

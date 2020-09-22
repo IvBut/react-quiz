@@ -1,5 +1,5 @@
 import {AUTH_FAIL, AUTH_LOGOUT, AUTH_STARTED, AUTH_SUCCESS} from "../actions/actionTypes";
-import AuthService from "../../services/AuthService";
+
 
 // let initialState = {
 //   credentials: AuthService.credentials,
@@ -45,9 +45,10 @@ const authReducer = (state = initialState, action) => {
                 isAuthenticated: false,
                 credentials: null,
                 userMessage: ''
-            }
+            };
+        default: return state;
     }
-    return state;
+
 };
 
 

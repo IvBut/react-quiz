@@ -1,12 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import classes from './QuizList.module.css';
-import {NavLink, useHistory} from "react-router-dom";
-import FirebaseService from "../../services/firebaseService";
+import {NavLink} from "react-router-dom";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchAllQuizes} from "../../store/actions/actionCreators";
 
-const QuizList = (props) => {
+const QuizList = () => {
 
     const allQuizList = useSelector(state => state.quizListReducer.allQuizList);
     const isLoading = useSelector(state => state.quizListReducer.loading);
@@ -26,7 +25,7 @@ const QuizList = (props) => {
 
     useEffect(()=> {
         dispatch(fetchAllQuizes())
-    },[]);
+    },[dispatch]);
 
     const renderQuizes = () => {
         return allQuizList.map((quiz, index) => {

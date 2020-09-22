@@ -1,6 +1,6 @@
 import Input from "../../components/UI/Input/Input";
 import React, {useState} from "react";
-import Confirm from "../../components/UI/Confirm/Confirm";
+
 
 export function withInputShowConfirm (Component) {
 

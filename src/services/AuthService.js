@@ -50,7 +50,7 @@ class  AuthService {
         const credentials = JSON.parse(localStorage.getItem(LOCAL_STORAGE_CREDENTIALS));
         if (credentials){
             const expDate = credentials.expiresIn;
-            if (!expDate || new Date() > expDate) {
+            if (!expDate || new Date() > new Date(expDate)) {
                 AuthService.logOut();
                 return null;
             }
